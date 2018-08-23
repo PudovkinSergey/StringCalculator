@@ -8,7 +8,7 @@ public class MainView extends JFrame {
 
     public MainView(){
         super("String Calculator");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 
         Controller controller = new Controller(this);
 
