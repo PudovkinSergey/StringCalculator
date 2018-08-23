@@ -7,6 +7,7 @@ public class MainView extends JFrame {
     Controller controller;
     JTextField answer;
     JTextField currentExpression;
+    JTextField error;
 
     public MainView(){
         super("String Calculator");
@@ -24,6 +25,11 @@ public class MainView extends JFrame {
         box.add(currentExpression);
 
         box.add(Box.createVerticalStrut(10));
+        error = new JTextField();
+        error.setMaximumSize(new Dimension(400, 15));
+        error.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+        error.setEditable(false);
+        box.add(error);
 
         answer = new JTextField("Answer");
         answer.setMaximumSize(new Dimension(400, 15));
