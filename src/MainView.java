@@ -1,64 +1,68 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Button;
+import java.util.ArrayList;
 
 public class MainView extends JFrame {
 
+    Controller controller;
+    Expression expression;
+    JTextField answer;
 
 
     public MainView(){
         super("String Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Controller controller = new Controller(this);
+        controller = new Controller(this);
+        expression = new Expression();
 
         Box box = Box.createVerticalBox();
 
+        box.add(Box.createVerticalStrut(10));
+
+        JTextField currentExpression = new JTextField(expression.getText());
+        currentExpression.setMaximumSize(new Dimension(400,15));
+        currentExpression.setEditable(false);
+        box.add(currentExpression);
 
         box.add(Box.createVerticalStrut(10));
 
-        JTextField currentString = new JTextField("0");
-        currentString.setMaximumSize(new Dimension(400,15));
-        currentString.setEditable(false);
-        box.add(currentString);
-
-        box.add(Box.createVerticalStrut(10));
-
-        JPanel answerPanel = new JPanel();
-        JLabel answerText = new JLabel("Answer: ");
-        JTextField answer = new JTextField();
-
-        answerPanel.setMaximumSize(new Dimension(400, 15));
-        answerPanel.add(answerText,answer);
-        answerPanel.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-        box.add(Box.createVerticalStrut(10));
-        box.add(answerPanel);
+        answer = new JTextField("Answer");
+        answer.setMaximumSize(new Dimension(400, 15));
+        answer.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+        answer.setEditable(false);
+        box.add(answer);
 
         box.add(Box.createVerticalStrut(10));
 
         JPanel buttonsPanel = new JPanel();
-
         buttonsPanel.setLayout(new GridLayout(5,4,10,10));
-        buttonsPanel.add(new Button("("));
-        buttonsPanel.add(new Button(")"));
-        buttonsPanel.add(new Button("?"));
-        buttonsPanel.add(new Button("c"));
-        buttonsPanel.add(new Button("7"));
-        buttonsPanel.add(new Button("8"));
-        buttonsPanel.add(new Button("9"));
-        buttonsPanel.add(new Button("/"));
-        buttonsPanel.add(new Button("4"));
-        buttonsPanel.add(new Button("5"));
-        buttonsPanel.add(new Button("6"));
-        buttonsPanel.add(new Button("*"));
-        buttonsPanel.add(new Button("1"));
-        buttonsPanel.add(new Button("2"));
-        buttonsPanel.add(new Button("3"));
-        buttonsPanel.add(new Button("-"));
-        buttonsPanel.add(new Button("0"));
-        buttonsPanel.add(new Button("."));
-        buttonsPanel.add(new Button("="));
-        buttonsPanel.add(new Button("+"));
+        ArrayList<CalculatorButton> buttons = new ArrayList<>();
+        buttons.add(new CalculatorButton("("));
+        buttons.add(new CalculatorButton(")"));
+        buttons.add(new CalculatorButton("?"));
+        buttons.add(new CalculatorButton("c"));
+        buttons.add(new CalculatorButton("7"));
+        buttons.add(new CalculatorButton("8"));
+        buttons.add(new CalculatorButton("9"));
+        buttons.add(new CalculatorButton("/"));
+        buttons.add(new CalculatorButton("4"));
+        buttons.add(new CalculatorButton("5"));
+        buttons.add(new CalculatorButton("6"));
+        buttons.add(new CalculatorButton("*"));
+        buttons.add(new CalculatorButton("1"));
+        buttons.add(new CalculatorButton("2"));
+        buttons.add(new CalculatorButton("3"));
+        buttons.add(new CalculatorButton("-"));
+        buttons.add(new CalculatorButton("0"));
+        buttons.add(new CalculatorButton("."));
+        buttons.add(new CalculatorButton("="));
+        buttons.add(new CalculatorButton("+"));
+        for (int i = 0; i<buttons.size();i++)
+            {
+                buttons.get(i).addMouseListener(controller);
+                buttonsPanel.add(buttons.get(i));
+            }
         box.add(buttonsPanel);
 
         box.add(Box.createVerticalStrut(10));
