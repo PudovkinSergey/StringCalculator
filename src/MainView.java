@@ -19,7 +19,7 @@ public class MainView extends JFrame {
 
         box.add(Box.createVerticalStrut(10));
 
-        currentExpression = new JTextField("0");
+        currentExpression = new JTextField(" ");
         currentExpression.setMaximumSize(new Dimension(400,15));
         currentExpression.setEditable(false);
         box.add(currentExpression);
