@@ -25,8 +25,6 @@ public class Controller extends MouseAdapter implements MouseListener {
 
                 if (lastSymbol.equals("(")) bracketsCounter--;
                 if (lastSymbol.equals(")")) bracketsCounter++;
-                if (lastSymbol.equals("+") || lastSymbol.equals("-") || lastSymbol.equals("/") || lastSymbol.equals("*"))
-                    ;
                 if (text.length() > 1) parent.currentExpression.setText(text.substring(0, text.length() - 1));
                 else if (!(text.equals(" "))) parent.currentExpression.setText(" ");
 
@@ -36,8 +34,7 @@ public class Controller extends MouseAdapter implements MouseListener {
             case "=": {
 
                 if (bracketsCounter == 0) {
-                    if (lastSymbol.equals("+") || lastSymbol.equals("-")
-                            || lastSymbol.equals("/") || lastSymbol.equals("*")) {
+                    if (isSign(lastSymbol)) {
                         parent.error.setText("Invalid expression");
                     } else {
                         parent.answer.setText(evaluate(text));
@@ -52,16 +49,14 @@ public class Controller extends MouseAdapter implements MouseListener {
                 if (text.equals(" ")) {
                     parent.currentExpression.setText("(");
                     bracketsCounter++;
-                } else if (lastSymbol.equals("(") || lastSymbol.equals("+") ||
-                        lastSymbol.equals("-") || lastSymbol.equals("/") || lastSymbol.equals("*")) {
+                } else if (lastSymbol.equals("(") || isSign(lastSymbol)) {
                     bracketsCounter++;
                     parent.currentExpression.setText(text + symbol);
                 } else parent.error.setText("Can not open parentheses");
                 break;
             case ")":
                 if (bracketsCounter > 0) {
-                    if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || lastSymbol.equals("+") ||
-                            lastSymbol.equals("-") || lastSymbol.equals("/") || lastSymbol.equals("*"))) {
+                    if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || isSign(lastSymbol))) {
                         bracketsCounter--;
                         parent.currentExpression.setText(text + symbol);
                     } else parent.error.setText("Can not close parentheses");
@@ -74,28 +69,23 @@ public class Controller extends MouseAdapter implements MouseListener {
             case "*":
             case "/":
                 if (!text.equals(" ")) {
-                    if (lastSymbol.equals("+") ||
-                            lastSymbol.equals("-") || lastSymbol.equals("/") || lastSymbol.equals("*")) {
+                    if (isSign(lastSymbol)) {
                         parent.currentExpression.setText(text.substring(0, text.length() - 1) + symbol);
-                    } else if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || lastSymbol.equals("+") ||
-                            lastSymbol.equals("-") || lastSymbol.equals("/") || lastSymbol.equals("*")))
+                    } else if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || isSign(lastSymbol)))
                         parent.currentExpression.setText(text + symbol);
                     else parent.error.setText("Can not add sign");
                 } else parent.error.setText("Can not add sign");
                 break;
             case "-":
-                if (lastSymbol.equals("+") ||
-                        lastSymbol.equals("-") || lastSymbol.equals("/") || lastSymbol.equals("*")) {
+                if (isSign(lastSymbol)) {
                     parent.currentExpression.setText(text.substring(0, text.length() - 1) + symbol);
-                } else if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || lastSymbol.equals("+") ||
-                        lastSymbol.equals("-") || lastSymbol.equals("/") || lastSymbol.equals("*")))
+                } else if (!(lastSymbol.equals(".")  || isSign(lastSymbol)))
                     parent.currentExpression.setText(text + symbol);
                 else parent.error.setText("Can not add sign");
                 break;
 
             case ".":
-                if (!(lastSymbol.equals(")") || lastSymbol.equals(".") || lastSymbol.equals("(") || lastSymbol.equals("+") ||
-                        lastSymbol.equals("-") || lastSymbol.equals("/") || lastSymbol.equals("*")))
+                if (!(lastSymbol.equals(")") || lastSymbol.equals(".") || lastSymbol.equals("(") || isSign(lastSymbol)))
                     parent.currentExpression.setText(text + symbol);
             default:
 
@@ -111,6 +101,58 @@ public class Controller extends MouseAdapter implements MouseListener {
     }
 
     private String evaluate(String expression){
-        return "test";
+        //TODO convert to polish notation and evaluate
+        return updateUnaryMinus(expression);
+
     }
+
+    private String updateUnaryMinus(String expression){
+        String previous=expression.substring(0,1);
+        if (previous.equals("-")) {
+            expression="(0"+expression+")";
+            previous="0";
+        }
+        if (expression.length()>1){
+
+        for (int i =1; i<expression.length();i++){
+
+            if (expression.substring(i,i+1).equals("-")&&!isNumber(previous)){
+                expression=expression.substring(0,i)+"0"+expression.substring(i,expression.length());
+                previous="-";
+                i=i+1;
+                System.out.println(expression);
+            }
+            else previous=expression.substring(i,i+1);
+        }
+
+        }
+        return expression;
+    }
+    private boolean isSign(String symbol){
+        switch (symbol) {
+            case "-":
+            case "+":
+            case "*":
+            case "/":
+                return true;
+        }
+        return false;
+    }
+    private boolean isNumber(String symbol){
+        switch (symbol) {
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+            case "0":
+                return true;
+        }
+        return false;
+    }
+
 }
