@@ -40,8 +40,7 @@ public class Controller extends MouseAdapter implements MouseListener {
                             || lastSymbol.equals("/") || lastSymbol.equals("*")) {
                         parent.error.setText("Invalid expression");
                     } else {
-                        String result = "TEST";
-                        parent.answer.setText(result);
+                        parent.answer.setText(evaluate(text));
                         parent.currentExpression.setText(" ");
                         bracketsCounter = 0;
                     }
@@ -111,4 +110,7 @@ public class Controller extends MouseAdapter implements MouseListener {
         }
     }
 
+    private String evaluate(String expression){
+        return "test";
+    }
 }
