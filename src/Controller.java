@@ -23,6 +23,14 @@ public class Controller extends MouseAdapter implements MouseListener {
         String lastSymbol = text.substring(text.length() - 1);
         String symbol = clickedButton.getText();
         switch (clickedButton.getText()) {
+            case "?":
+                clickedButton.setText(":");
+                parent.error.setText("Support for : button in work");
+                break;
+            case ":":
+                clickedButton.setText("?");
+                parent.error.setText("Support for ? button in work");
+                break;
             case "c":
 
 
@@ -113,10 +121,11 @@ public class Controller extends MouseAdapter implements MouseListener {
     }
     private String makeReversePolishNotation(String expression){
         String separators = "()*+/-";
+        String result="";
         Stack<String> stackOperations = new Stack<String>();
         // RPN - reverse polish notation
         Stack<String> stackRPN = new Stack<String>();
-        Stack<String> stackAnswer = new Stack<String>();
+        Stack<String> stackTemp = new Stack<String>();
         //splitting expression into tokens
         StringTokenizer stringTokenizer = new StringTokenizer(updateUnaryMinus(expression),separators,true);
 
@@ -148,11 +157,13 @@ public class Controller extends MouseAdapter implements MouseListener {
         while (!stackOperations.empty()){
             stackRPN.push(stackOperations.pop());
         }
-        String result="";
+
         Collections.reverse(stackRPN);
         while (!stackRPN.empty()){
-            result=result+stackRPN.pop();
+            if (isNumber(stackRPN.lastElement())) stackTemp.push(stackRPN.pop()) ;
+            else stackTemp.push(makeOperation(stackRPN.pop(),stackTemp.pop(),stackTemp.pop()));
         }
+        result=stackTemp.pop();
         return result;
     }
     private String updateUnaryMinus(String expression){
@@ -187,22 +198,16 @@ public class Controller extends MouseAdapter implements MouseListener {
         }
         return false;
     }
-    private boolean isNumber(String symbol){
-        switch (symbol) {
-            case "1":
-            case "2":
-            case "3":
-            case "4":
-            case "5":
-            case "6":
-            case "7":
-            case "8":
-            case "9":
-            case "0":
-                return true;
+    private boolean isNumber(String symbol) {
+        try {
+            Double.parseDouble(symbol);
+        } catch (Exception e) {
+
+            return false;
         }
-        return false;
+        return true;
     }
+
     private boolean isOpenBracket(String symbol) {
         return symbol.equals("(");
     }
@@ -217,5 +222,13 @@ public class Controller extends MouseAdapter implements MouseListener {
         }
         return 2;
     }
-
+    private String makeOperation(String operation,String secondOperand, String firstOperand){
+        switch (operation){
+            case"+": return String.valueOf(Double.parseDouble(firstOperand)+Double.parseDouble(secondOperand));
+            case"-": return String.valueOf(Double.parseDouble(firstOperand)-Double.parseDouble(secondOperand));
+            case"*": return String.valueOf(Double.parseDouble(firstOperand)*Double.parseDouble(secondOperand));
+            case"/": return String.valueOf(Double.parseDouble(firstOperand)/Double.parseDouble(secondOperand));
+        default:return operation;
+        }
+    }
 }
