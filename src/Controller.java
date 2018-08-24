@@ -90,7 +90,7 @@ public class Controller extends MouseAdapter implements MouseListener {
             case "-":
                 if (isSign(lastSymbol)) {
                     parent.currentExpression.setText(text.substring(0, text.length() - 1) + symbol);
-                } else if (!(lastSymbol.equals(".")  || isSign(lastSymbol)))
+                } else if (!(lastSymbol.equals(".") || isSign(lastSymbol)))
                     parent.currentExpression.setText(text + symbol);
                 else parent.error.setText("Can not add sign");
                 break;
@@ -112,83 +112,82 @@ public class Controller extends MouseAdapter implements MouseListener {
     }
 
     //evaluation using Shunting-yard algorithm
-    private String evaluate(String expression){
-        String result=makeReversePolishNotation(expression);
+    private String evaluate(String expression) {
+        String result = makeReversePolishNotation(expression);
 
         //TODO convert to polish notation and evaluate
         return result;
 
     }
-    private String makeReversePolishNotation(String expression){
+
+    private String makeReversePolishNotation(String expression) {
         String separators = "()*+/-";
-        String result="";
+        String result = "";
         Stack<String> stackOperations = new Stack<String>();
         // RPN - reverse polish notation
         Stack<String> stackRPN = new Stack<String>();
         Stack<String> stackTemp = new Stack<String>();
         //splitting expression into tokens
-        StringTokenizer stringTokenizer = new StringTokenizer(updateUnaryMinus(expression),separators,true);
+        StringTokenizer stringTokenizer = new StringTokenizer(updateUnaryMinus(expression), separators, true);
 
 
-        while (stringTokenizer.hasMoreTokens()){
+        while (stringTokenizer.hasMoreTokens()) {
             String token = stringTokenizer.nextToken();
-            if (isNumber(token)){
+            if (isNumber(token)) {
                 stackRPN.push(token);
-            }
-            else if (isOpenBracket(token)){
+            } else if (isOpenBracket(token)) {
                 stackOperations.push(token);
-            }
-            else if(isCloseBracket(token)){
-                while (!isOpenBracket(stackOperations.lastElement())){
+            } else if (isCloseBracket(token)) {
+                while (!isOpenBracket(stackOperations.lastElement())) {
                     stackRPN.push(stackOperations.pop());
                 }
                 stackOperations.pop();
-            }
-            else if(isSign(token)){
+            } else if (isSign(token)) {
 
-                while (!stackOperations.empty()&&isSign(stackOperations.lastElement())
-                        &&getPrecedence(stackOperations.lastElement())>getPrecedence(token)){
+                while (!stackOperations.empty() && isSign(stackOperations.lastElement())
+                        && getPrecedence(stackOperations.lastElement()) > getPrecedence(token)) {
                     stackRPN.push(stackOperations.pop());
                 }
                 stackOperations.push(token);
             }
 
         }
-        while (!stackOperations.empty()){
+        while (!stackOperations.empty()) {
             stackRPN.push(stackOperations.pop());
         }
 
         Collections.reverse(stackRPN);
-        while (!stackRPN.empty()){
-            if (isNumber(stackRPN.lastElement())) stackTemp.push(stackRPN.pop()) ;
-            else stackTemp.push(makeOperation(stackRPN.pop(),stackTemp.pop(),stackTemp.pop()));
+        while (!stackRPN.empty()) {
+            if (isNumber(stackRPN.lastElement())) stackTemp.push(stackRPN.pop());
+            else stackTemp.push(makeOperation(stackRPN.pop(), stackTemp.pop(), stackTemp.pop()));
         }
-        result=stackTemp.pop();
+        result = stackTemp.pop();
         return result;
     }
-    private String updateUnaryMinus(String expression){
-        String previous=expression.substring(0,1);
+
+    private String updateUnaryMinus(String expression) {
+        String previous = expression.substring(0, 1);
         if (previous.equals("-")) {
-            expression="(0"+expression+")";
-            previous="0";
+            expression = "(0" + expression + ")";
+            previous = "0";
         }
-        if (expression.length()>1){
+        if (expression.length() > 1) {
 
-        for (int i =1; i<expression.length();i++){
+            for (int i = 1; i < expression.length(); i++) {
 
-            if (expression.substring(i,i+1).equals("-")&&!isNumber(previous)){
-                expression=expression.substring(0,i)+"0"+expression.substring(i,expression.length());
-                previous="-";
-                i=i+1;
-                System.out.println(expression);
+                if (expression.substring(i, i + 1).equals("-") && !isNumber(previous)) {
+                    expression = expression.substring(0, i) + "0" + expression.substring(i, expression.length());
+                    previous = "-";
+                    i = i + 1;
+                    System.out.println(expression);
+                } else previous = expression.substring(i, i + 1);
             }
-            else previous=expression.substring(i,i+1);
-        }
 
         }
         return expression;
     }
-    private boolean isSign(String symbol){
+
+    private boolean isSign(String symbol) {
         switch (symbol) {
             case "-":
             case "+":
@@ -198,6 +197,7 @@ public class Controller extends MouseAdapter implements MouseListener {
         }
         return false;
     }
+
     private boolean isNumber(String symbol) {
         try {
             Double.parseDouble(symbol);
@@ -222,13 +222,19 @@ public class Controller extends MouseAdapter implements MouseListener {
         }
         return 2;
     }
-    private String makeOperation(String operation,String secondOperand, String firstOperand){
-        switch (operation){
-            case"+": return String.valueOf(Double.parseDouble(firstOperand)+Double.parseDouble(secondOperand));
-            case"-": return String.valueOf(Double.parseDouble(firstOperand)-Double.parseDouble(secondOperand));
-            case"*": return String.valueOf(Double.parseDouble(firstOperand)*Double.parseDouble(secondOperand));
-            case"/": return String.valueOf(Double.parseDouble(firstOperand)/Double.parseDouble(secondOperand));
-        default:return operation;
+
+    private String makeOperation(String operation, String secondOperand, String firstOperand) {
+        switch (operation) {
+            case "+":
+                return String.valueOf(Double.parseDouble(firstOperand) + Double.parseDouble(secondOperand));
+            case "-":
+                return String.valueOf(Double.parseDouble(firstOperand) - Double.parseDouble(secondOperand));
+            case "*":
+                return String.valueOf(Double.parseDouble(firstOperand) * Double.parseDouble(secondOperand));
+            case "/":
+                return String.valueOf(Double.parseDouble(firstOperand) / Double.parseDouble(secondOperand));
+            default:
+                return operation;
         }
     }
 }
