@@ -4,7 +4,6 @@
     <list default="true" id="4de0a8d5-1b27-44b3-97e4-33acc11de33b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Calculator/Controller.class" afterPath="$PROJECT_DIR$/out/production/Calculator/Controller.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Controller.java" afterPath="$PROJECT_DIR$/src/Controller.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -258,11 +257,18 @@
       <option name="project" value="LOCAL" />
       <updated>1535084567155</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added evaluation for RPN.">
+      <created>1535089760173</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1535089760173</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="31191000" />
+    <option name="totallyTimeSpent" value="31243000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
@@ -358,7 +364,8 @@
     <MESSAGE value="Small changes in controller: realisation for &quot;=&quot; button." />
     <MESSAGE value="Added fix for unary minus" />
     <MESSAGE value="Added transformation to reverse polish notation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added transformation to reverse polish notation" />
+    <MESSAGE value="Added evaluation for RPN." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added evaluation for RPN." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
