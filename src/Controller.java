@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Collections;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class Controller extends MouseAdapter implements MouseListener {
     private MainView parent;
@@ -100,9 +103,53 @@ public class Controller extends MouseAdapter implements MouseListener {
         }
     }
 
+    //evaluation using Shunting-yard algorithm
     private String evaluate(String expression){
+        String separators = "()*+/-";
+        Stack<String> stackOperations = new Stack<String>();
+        // RPN - reverse polish notation
+        Stack<String> stackRPN = new Stack<String>();
+        Stack<String> stackAnswer = new Stack<String>();
+        //splitting expression into tokens
+        StringTokenizer stringTokenizer = new StringTokenizer(updateUnaryMinus(expression),separators,true);
+
+
+        while (stringTokenizer.hasMoreTokens()){
+            String token = stringTokenizer.nextToken();
+            if (isNumber(token)){
+                stackRPN.push(token);
+            }
+            else if (isOpenBracket(token)){
+                stackOperations.push(token);
+            }
+            else if(isCloseBracket(token)){
+                while (!isOpenBracket(stackOperations.lastElement())){
+                    stackRPN.push(stackOperations.pop());
+                }
+                stackOperations.pop();
+            }
+            else if(isSign(token)){
+
+                while (!stackOperations.empty()&&isSign(stackOperations.lastElement())
+                        &&getPrecedence(stackOperations.lastElement())>getPrecedence(token)){
+                    stackRPN.push(stackOperations.pop());
+                }
+                stackOperations.push(token);
+            }
+
+        }
+        while (!stackOperations.empty()){
+            stackRPN.push(stackOperations.pop());
+        }
+        String result="";
+        Collections.reverse(stackRPN);
+       while (!stackRPN.empty()){
+            //System.out.println(stackRPN.pop());
+            result=result+stackRPN.pop();
+        }
+
         //TODO convert to polish notation and evaluate
-        return updateUnaryMinus(expression);
+        return result;
 
     }
 
@@ -153,6 +200,20 @@ public class Controller extends MouseAdapter implements MouseListener {
                 return true;
         }
         return false;
+    }
+    private boolean isOpenBracket(String symbol) {
+        return symbol.equals("(");
+    }
+
+    private boolean isCloseBracket(String symbol) {
+        return symbol.equals(")");
+    }
+
+    private byte getPrecedence(String token) {
+        if (token.equals("+") || token.equals("-")) {
+            return 1;
+        }
+        return 2;
     }
 
 }
