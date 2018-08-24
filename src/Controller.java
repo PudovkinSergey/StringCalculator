@@ -105,6 +105,13 @@ public class Controller extends MouseAdapter implements MouseListener {
 
     //evaluation using Shunting-yard algorithm
     private String evaluate(String expression){
+        String result=makeReversePolishNotation(expression);
+
+        //TODO convert to polish notation and evaluate
+        return result;
+
+    }
+    private String makeReversePolishNotation(String expression){
         String separators = "()*+/-";
         Stack<String> stackOperations = new Stack<String>();
         // RPN - reverse polish notation
@@ -143,16 +150,11 @@ public class Controller extends MouseAdapter implements MouseListener {
         }
         String result="";
         Collections.reverse(stackRPN);
-       while (!stackRPN.empty()){
-            //System.out.println(stackRPN.pop());
+        while (!stackRPN.empty()){
             result=result+stackRPN.pop();
         }
-
-        //TODO convert to polish notation and evaluate
         return result;
-
     }
-
     private String updateUnaryMinus(String expression){
         String previous=expression.substring(0,1);
         if (previous.equals("-")) {
