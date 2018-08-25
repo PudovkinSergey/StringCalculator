@@ -1,0 +1,3 @@
+# StringCalculator
+
+Simple string calculator. 
