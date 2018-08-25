@@ -7,9 +7,9 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Controller extends MouseAdapter implements MouseListener {
+
     private MainView parent;
     private int bracketsCounter = 0;
-
 
     public Controller(MainView parent) {
         this.parent = parent;
@@ -17,11 +17,11 @@ public class Controller extends MouseAdapter implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent event) {
-
         JButton clickedButton = (JButton) event.getComponent();
         String text = parent.currentExpression.getText();
         String lastSymbol = text.substring(text.length() - 1);
         String symbol = clickedButton.getText();
+
         switch (clickedButton.getText()) {
             case "?":
                 clickedButton.setText(":");
@@ -32,20 +32,14 @@ public class Controller extends MouseAdapter implements MouseListener {
                 parent.error.setText("Support for ? button in work");
                 break;
             case "c":
-
-
                 if (lastSymbol.equals("(")) bracketsCounter--;
                 if (lastSymbol.equals(")")) bracketsCounter++;
                 if (text.length() > 1) parent.currentExpression.setText(text.substring(0, text.length() - 1));
                 else if (!(text.equals(" "))) parent.currentExpression.setText(" ");
-
-
                 break;
-
             case "=": {
-
                 if (bracketsCounter == 0) {
-                    if (isSign(lastSymbol)) {
+                    if (isOperator(lastSymbol)) {
                         parent.error.setText("Invalid expression");
                     } else {
                         parent.answer.setText(evaluate(text));
@@ -56,80 +50,65 @@ public class Controller extends MouseAdapter implements MouseListener {
                 break;
             }
             case "(":
-
                 if (text.equals(" ")) {
                     parent.currentExpression.setText("(");
                     bracketsCounter++;
-                } else if (lastSymbol.equals("(") || isSign(lastSymbol)) {
+                } else if (lastSymbol.equals("(") || isOperator(lastSymbol)) {
                     bracketsCounter++;
                     parent.currentExpression.setText(text + symbol);
                 } else parent.error.setText("Can not open parentheses");
                 break;
             case ")":
                 if (bracketsCounter > 0) {
-                    if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || isSign(lastSymbol))) {
+                    if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || isOperator(lastSymbol))) {
                         bracketsCounter--;
                         parent.currentExpression.setText(text + symbol);
                     } else parent.error.setText("Can not close parentheses");
-
                 } else parent.error.setText("Can not close parentheses");
-
                 break;
-
             case "+":
             case "*":
             case "/":
                 if (!text.equals(" ")) {
-                    if (isSign(lastSymbol)) {
+                    if (isOperator(lastSymbol)) {
                         parent.currentExpression.setText(text.substring(0, text.length() - 1) + symbol);
-                    } else if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || isSign(lastSymbol)))
+                    } else if (!(lastSymbol.equals(".") || lastSymbol.equals("(") || isOperator(lastSymbol)))
                         parent.currentExpression.setText(text + symbol);
                     else parent.error.setText("Can not add sign");
                 } else parent.error.setText("Can not add sign");
                 break;
             case "-":
-                if (isSign(lastSymbol)) {
+                if (isOperator(lastSymbol)) {
                     parent.currentExpression.setText(text.substring(0, text.length() - 1) + symbol);
-                } else if (!(lastSymbol.equals(".") || isSign(lastSymbol)))
+                } else if (!(lastSymbol.equals(".") || isOperator(lastSymbol)))
                     parent.currentExpression.setText(text + symbol);
                 else parent.error.setText("Can not add sign");
                 break;
-
             case ".":
-                if (!(lastSymbol.equals(")") || lastSymbol.equals(".") || lastSymbol.equals("(") || isSign(lastSymbol)))
+                if (!(lastSymbol.equals(")") || lastSymbol.equals(".") || lastSymbol.equals("(") || isOperator(lastSymbol)))
                     parent.currentExpression.setText(text + symbol);
             default:
-
                 if (text.equals(" ")) {
                     parent.currentExpression.setText(symbol);
                 } else if (!lastSymbol.equals(")")) {
                     parent.currentExpression.setText(text + symbol);
                 } else parent.error.setText("Can not add number");
-
-
                 break;
         }
     }
 
     //evaluation using Shunting-yard algorithm
     private String evaluate(String expression) {
-        String result = makeReversePolishNotation(expression);
-
-        //TODO convert to polish notation and evaluate
-        return result;
-
-    }
-
-    private String makeReversePolishNotation(String expression) {
         String separators = "()*+/-";
-        String result = "";
+        String result;
+        // Stack for using in algorithm
         Stack<String> stackOperations = new Stack<String>();
-        // RPN - reverse polish notation
+        // Stack for RPN - reverse polish notation
         Stack<String> stackRPN = new Stack<String>();
+        // Stack for evaluating answer
         Stack<String> stackTemp = new Stack<String>();
         //splitting expression into tokens
         StringTokenizer stringTokenizer = new StringTokenizer(updateUnaryMinus(expression), separators, true);
-
 
         while (stringTokenizer.hasMoreTokens()) {
             String token = stringTokenizer.nextToken();
@@ -142,21 +121,20 @@ public class Controller extends MouseAdapter implements MouseListener {
                     stackRPN.push(stackOperations.pop());
                 }
                 stackOperations.pop();
-            } else if (isSign(token)) {
-
-                while (!stackOperations.empty() && isSign(stackOperations.lastElement())
+            } else if (isOperator(token)) {
+                while (!stackOperations.empty() && isOperator(stackOperations.lastElement())
                         && getPrecedence(stackOperations.lastElement()) > getPrecedence(token)) {
                     stackRPN.push(stackOperations.pop());
                 }
                 stackOperations.push(token);
             }
-
         }
         while (!stackOperations.empty()) {
             stackRPN.push(stackOperations.pop());
         }
-
         Collections.reverse(stackRPN);
+
+        // Evaluation if RPN expression
         while (!stackRPN.empty()) {
             if (isNumber(stackRPN.lastElement())) stackTemp.push(stackRPN.pop());
             else stackTemp.push(makeOperation(stackRPN.pop(), stackTemp.pop(), stackTemp.pop()));
@@ -165,6 +143,7 @@ public class Controller extends MouseAdapter implements MouseListener {
         return result;
     }
 
+    // Transforming expression: -x -> 0-x
     private String updateUnaryMinus(String expression) {
         String previous = expression.substring(0, 1);
         if (previous.equals("-")) {
@@ -172,9 +151,7 @@ public class Controller extends MouseAdapter implements MouseListener {
             previous = "0";
         }
         if (expression.length() > 1) {
-
             for (int i = 1; i < expression.length(); i++) {
-
                 if (expression.substring(i, i + 1).equals("-") && !isNumber(previous)) {
                     expression = expression.substring(0, i) + "0" + expression.substring(i, expression.length());
                     previous = "-";
@@ -182,12 +159,11 @@ public class Controller extends MouseAdapter implements MouseListener {
                     System.out.println(expression);
                 } else previous = expression.substring(i, i + 1);
             }
-
         }
         return expression;
     }
 
-    private boolean isSign(String symbol) {
+    private boolean isOperator(String symbol) {
         switch (symbol) {
             case "-":
             case "+":
@@ -202,7 +178,6 @@ public class Controller extends MouseAdapter implements MouseListener {
         try {
             Double.parseDouble(symbol);
         } catch (Exception e) {
-
             return false;
         }
         return true;

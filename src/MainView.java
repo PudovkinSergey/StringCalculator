@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class MainView extends JFrame {
 
-    Controller controller;
     JTextField answer;
     JTextField currentExpression;
     JTextField error;
@@ -13,10 +12,9 @@ public class MainView extends JFrame {
         super("String Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        controller = new Controller(this);
+        Controller controller = new Controller(this);
 
         Box box = Box.createVerticalBox();
-
         box.add(Box.createVerticalStrut(10));
 
         currentExpression = new JTextField(" ");
@@ -31,6 +29,7 @@ public class MainView extends JFrame {
         error.setEditable(false);
         box.add(error);
 
+        box.add(Box.createVerticalStrut(10));
         answer = new JTextField("Answer");
         answer.setMaximumSize(new Dimension(400, 15));
         answer.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
@@ -38,7 +37,6 @@ public class MainView extends JFrame {
         box.add(answer);
 
         box.add(Box.createVerticalStrut(10));
-
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(5, 4, 10, 10));
         ArrayList<JButton> buttons = new ArrayList<>();
@@ -62,9 +60,10 @@ public class MainView extends JFrame {
         buttons.add(new JButton("."));
         buttons.add(new JButton("="));
         buttons.add(new JButton("+"));
-        for (int i = 0; i < buttons.size(); i++) {
-            buttons.get(i).addMouseListener(controller);
-            buttonsPanel.add(buttons.get(i));
+        for (JButton button:buttons) {
+            button.addMouseListener(controller);
+            buttonsPanel.add(button);
+
         }
         box.add(buttonsPanel);
 
